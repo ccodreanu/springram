@@ -87,3 +87,6 @@ local.properties
 target/
 
 /bin
+
+mvnw
+mvnw.cmd
