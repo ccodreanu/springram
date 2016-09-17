@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,14 +21,14 @@ public class UserController {
 	private UserRepository userRepository;
 	
 	
-	@GetMapping(value = "/register")
+	@GetMapping("/register")
 	public String registerForm(Model model) {
 		model.addAttribute("registerForm", new User());
 		
 		return "register";
 	}
 	
-	@PostMapping(value = "/register")
+	@PostMapping("/register")
 	public String registerUser(@ModelAttribute("registerForm") User user) {
 		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 		userRepository.save(user);
@@ -35,26 +36,20 @@ public class UserController {
 		return "redirect:/login";
 	}
 
-	@GetMapping(value = "/login")
+	@GetMapping("/login")
 	public String login() {
 		return "login";
 	}
 	
-	@RequestMapping(value = "/protected", method = RequestMethod.GET)
+	@GetMapping("/")
 	@ResponseBody
 	public String hello() {
-		return "this should be protected";
+		return "this will be user area";
 	}
 	
-	@RequestMapping(value = "/public", method = RequestMethod.GET)
+	@GetMapping("/{username}")
 	@ResponseBody
-	public String say() {
-		User u = new User();
-		u.setUsername("cata");
-		u.setPassword(new BCryptPasswordEncoder().encode("password"));
-		
-		userRepository.save(u);
-		
-		return "this should be public";
+	public String dash(@PathVariable String username) {
+		return username;
 	}
 }
