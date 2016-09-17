@@ -3,6 +3,10 @@ package it.nettiva.springram.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +20,22 @@ public class UserController {
 	private UserRepository userRepository;
 	
 	
+	@GetMapping(value = "/register")
+	public String registerForm(Model model) {
+		model.addAttribute("registerForm", new User());
+		
+		return "register";
+	}
+	
+	@PostMapping(value = "/register")
+	public String registerUser(@ModelAttribute("registerForm") User user) {
+		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+		userRepository.save(user);
+		
+		return "redirect:/login";
+	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@GetMapping(value = "/login")
 	public String login() {
 		return "login";
 	}
